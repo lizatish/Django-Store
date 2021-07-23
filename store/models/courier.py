@@ -1,44 +1,16 @@
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
-
-
-
-class CourierType(models.TextChoices):
-    FOOT = "foot"
-    BIKE = "bike"
-    CAR = "car"
-
-    @staticmethod
-    def get_type(type):
-        if type == 'foot':
-            return CourierType.FOOT
-        elif type == 'bike':
-            return CourierType.BIKE
-        elif type == 'car':
-            return CourierType.CAR
-
-    @staticmethod
-    def get_max_weight(type):
-        if type == CourierType.FOOT:
-            return 10
-        elif type == CourierType.BIKE:
-            return 15
-        elif type == CourierType.CAR:
-            return 50
-
-    @staticmethod
-    def get_coefficient(type):
-        if type == CourierType.FOOT:
-            return 2
-        elif type == CourierType.BIKE:
-            return 5
-        elif type == CourierType.CAR:
-            return 9
+from store.models.courier_assign_time import CourierAssignTime
+from store.models.courier_type import CourierType
+from store.models.order import Order
+from store.models.order_assign_time import OrderAssignTime
 
 
 class Courier(models.Model):
     # __tablename__ = 'courier'
+
+    id = models.IntegerField(primary_key=True, unique=True)
 
     courier_type = models.CharField(
         choices=CourierType.choices,
@@ -200,4 +172,3 @@ class Courier(models.Model):
                 intersect_orders.append(order)
 
         return set(intersect_orders)
-

@@ -1,4 +1,4 @@
-from store.models import Courier
+from store.models.courier import Courier
 
 
 class CourierService:

@@ -6,6 +6,9 @@ from store.tools.json_service import JsonService
 
 
 class CourierView(APIView):
+    def get(self, request, courier_id):
+        pass
+
     def patch(self, request, courier_id):
         json_service = JsonService()
 
@@ -23,3 +26,8 @@ class CourierView(APIView):
         CourierService.edit_courier(courier, data)
 
         return json_service.return_200(courier.to_dict())
+
+    def post(self, request):
+        json_service = JsonService()
+
+        return json_service.return_404()
