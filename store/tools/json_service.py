@@ -1,10 +1,14 @@
+import json
+
 from django.http import HttpResponse
+
+from store.tools.time_service import TimeService
 
 
 class JsonService:
 
     def return_400(self):
-        return jsonify(), 400
+        return HttpResponse(status=400)
 
     def return_404(self):
         return HttpResponse(status=404)
@@ -14,7 +18,7 @@ class JsonService:
 
     def return_201(self, data_type, data):
         success_idxs = [{'id': id} for id in data]
-        return jsonify({data_type: success_idxs}), 201
+        return HttpResponse(json.dumps({data_type: success_idxs}), status=201)
 
     def __form_400_error_message(self, errors, message):
         errors_idxs = [{'id': error_id} for error_id in errors]
@@ -69,7 +73,8 @@ class JsonService:
         return self.return_200(data)
 
     def __form_400_validation_error(self, data_type, errors_data):
-        return jsonify({'validation_error':
-                            {data_type: errors_data[0],
-                             'error_description':
-                                 errors_data[1]}}), 400
+        data = json.dumps({'validation_error':
+                               {data_type: errors_data[0],
+                                'error_description':
+                                    errors_data[1]}})
+        return HttpResponse(data, status=400)

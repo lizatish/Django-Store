@@ -1,3 +1,6 @@
+from store.models.completed_order import CompletedOrders
+from store.models.order import Order
+
 
 class OrderService:
     @staticmethod
@@ -6,22 +9,22 @@ class OrderService:
         for idx, order in enumerate(orders):
 
             order_id = order['order_id']
-            temp_courier = Order.query.get(order_id)
+            temp_courier = Order.objects.filter(order_id).first()
 
             if not temp_courier:
                 new_order = Order()
                 new_order.from_dict(order)
-                db.session.add(new_order)
+                new_order.save()
                 success.append(order_id)
             else:
                 errors.append(order_id)
-        if not errors:
-            db.session.commit()
+        # if not errors:
+        #     db.session.commit()
         return success, errors
 
     @staticmethod
     def get_order(id):
-        order = Order.query.get(id)
+        order = Order.objects.filter(id).first()
         return order
 
     @staticmethod
@@ -29,7 +32,8 @@ class OrderService:
         for order in orders:
             order.courier_id = None
             order.assign_time = None
-        db.session.commit()
+            order.save()
+        # db.session.commit()
 
     @staticmethod
     def complete_order(new_order, complete_time):
@@ -38,9 +42,10 @@ class OrderService:
         new_order.complete_order(complete_time)
         courier = CourierService.get_courier(new_order.courier_id)
         courier.complete_order(new_order)
-        db.session.commit()
+        courier.save()
+        # db.session.commit()
 
-        last_complete_order = CompletedOrders.query.filter_by(
+        last_complete_order = CompletedOrders.objects.filter(
             courier_id=new_order.courier_id,
             region=new_order.region
         ).first()
@@ -52,8 +57,9 @@ class OrderService:
                 general_complete_seconds=(new_order.complete_time - new_order.assign_time).total_seconds(),
                 region=new_order.region
             )
-            db.session.add(last_complete_order)
+            # db.session.add(last_complete_order)
         else:
             last_complete_order.update(new_order)
 
-        db.session.commit()
+        # db.session.commit()
+        last_complete_order.save()

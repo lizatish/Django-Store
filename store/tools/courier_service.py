@@ -1,4 +1,6 @@
 from store.models.courier import Courier
+from store.tools.order_service import OrderService
+from store.tools.time_service import TimeService
 
 
 class CourierService:
@@ -8,22 +10,23 @@ class CourierService:
         for idx, courier in enumerate(couriers):
 
             courier_id = courier['courier_id']
-            temp_courier = Courier.query.get(courier_id)
+            temp_courier = Courier.objects.filter(id=courier_id).first()
 
             if not temp_courier:
                 new_courier = Courier()
                 new_courier.from_dict(courier)
-                db.session.add(new_courier)
+                new_courier.save()
                 success.append(courier_id)
             else:
                 errors.append(courier_id)
-        if not errors:
-            db.session.commit()
+        # TODO подумать про транзации
+        # if not errors:
+        #    new_courier.save()
         return success, errors
 
     @staticmethod
     def get_courier(id):
-        courier = Courier.objects.filter(pk=id)
+        courier = Courier.objects.filter(id=id).first()
         return courier
 
     @staticmethod
@@ -32,13 +35,12 @@ class CourierService:
         intersection_orders = courier.check_intersection_with_orders()
         OrderService.release_orders(intersection_orders)
 
-
-    # TODO нужна ли статика?
     @staticmethod
     def get_assign_orders(courier):
         orders = courier.balancer_orders()
         time_service = TimeService()
         for order in orders:
             order.assign_time = time_service.get_assign_time()
-        db.session.commit()
+            order.save()
+        # db.session.commit()
         return orders

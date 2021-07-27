@@ -39,8 +39,8 @@ class Courier(models.Model):
                     self.max_weight = CourierType.get_max_weight(self.courier_type)
                 elif field == 'working_hours':
                     for working_hour in data[field]:
-                        assign_time = CourierAssignTime(working_hour, data['courier_id'])
-                        db.session.add(assign_time)
+                        assign_time = CourierAssignTime(working_hour, self)
+                        assign_time.save()
                 elif field == 'courier_id':
                     setattr(self, 'id', data[field])
                 else:
@@ -120,7 +120,7 @@ class Courier(models.Model):
         return new_orders
 
     def get_active_orders(self):
-        return Order.query.filter_by(courier_id=self.id, is_complete=False).all()
+        return Order.objects.filter(courier_id=self.id, is_complete=False).all()
 
     # TODO написать тесты на баланс распределения заказов на курьера (все должно работать, но нужны тесты)
     def check_intersection_with_orders(self):
