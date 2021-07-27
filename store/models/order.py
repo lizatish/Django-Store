@@ -19,7 +19,7 @@ class Order(models.Model):
     # assign_times: List[OrderAssignTime] = db.relationship(OrderAssignTime, backref=db.backref('order'))
 
     def get_assign_times(self):
-        return OrderAssignTime.query.filter_by(
+        return OrderAssignTime.objects.filter_by(
             order_id=self.id
         ).order_by(OrderAssignTime.time_start_hour, OrderAssignTime.time_start_min,
                    OrderAssignTime.time_finish_hour, OrderAssignTime.time_finish_min).all()

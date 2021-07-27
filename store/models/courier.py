@@ -84,7 +84,7 @@ class Courier(models.Model):
 
     # TODO разбить на функции
     def balancer_orders(self):
-        orders = Order.query.filter(
+        orders = Order.objects.filter(
             Order.courier_id == None,
             Order.is_complete == False,
             Order.weight + self.current_weight <= self.max_weight,
@@ -93,12 +93,12 @@ class Courier(models.Model):
 
         new_orders = []
         for order in orders:
-            order_assign_times = OrderAssignTime.query.filter_by(
+            order_assign_times = OrderAssignTime.objects.filter_by(
                 order_id=order.id
             ).order_by(OrderAssignTime.time_start_hour, OrderAssignTime.time_start_min,
                        OrderAssignTime.time_finish_hour, OrderAssignTime.time_finish_min).all()
 
-            courier_assign_times = CourierAssignTime.query.filter(
+            courier_assign_times = CourierAssignTime.objects.filter(
                 CourierAssignTime.courier_id == self.id).all()
 
             for courier_time in courier_assign_times:
