@@ -7,7 +7,7 @@ class CourierAssignTime(models.Model):
     time_finish_hour = models.IntegerField()
     time_finish_min = models.IntegerField()
 
-    courier_id = models.ForeignKey('Courier', on_delete=models.CASCADE)
+    courier = models.ForeignKey('Courier', on_delete=models.CASCADE)
 
     def __init__(self, delivery_hours, courier, *args, **kwargs):
         super().__init__(*args, **kwargs)

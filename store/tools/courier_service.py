@@ -16,6 +16,9 @@ class CourierService:
                 new_courier = Courier()
                 new_courier.from_dict(courier)
                 new_courier.save()
+                # TODO дичь
+                new_courier.set_assign_time(courier['working_hours'])
+                new_courier.save()
                 success.append(courier_id)
             else:
                 errors.append(courier_id)

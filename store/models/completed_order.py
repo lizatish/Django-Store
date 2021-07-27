@@ -4,7 +4,7 @@ from django.db import models
 class CompletedOrders(models.Model):
     __tablename__ = 'completed_orders'
 
-    courier_id = models.ForeignKey('Courier', on_delete=models.CASCADE)
+    courier = models.ForeignKey('Courier', on_delete=models.CASCADE)
     completed_orders = models.IntegerField(default=0)
     last_complete_time = models.DateTimeField()
     general_complete_seconds = models.FloatField()

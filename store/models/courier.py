@@ -32,19 +32,20 @@ class Courier(models.Model):
         return float(self.current_weight)
 
     def from_dict(self, data):
-        for field in ['courier_id', 'courier_type', 'regions', 'working_hours']:
+        for field in ['courier_id', 'courier_type', 'regions']:
             if field in data:
                 if field == 'courier_type':
                     self.courier_type = CourierType.get_type(data[field])
                     self.max_weight = CourierType.get_max_weight(self.courier_type)
-                elif field == 'working_hours':
-                    for working_hour in data[field]:
-                        assign_time = CourierAssignTime(working_hour, self)
-                        assign_time.save()
                 elif field == 'courier_id':
                     setattr(self, 'id', data[field])
                 else:
                     setattr(self, field, data[field])
+
+    def set_assign_time(self, data):
+        for working_hour in data:
+            assign_time = CourierAssignTime(working_hour, self)
+            assign_time.save()
 
     def complete_order(self, order):
         self.current_weight -= order.weight
